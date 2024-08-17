@@ -45,10 +45,9 @@ router.patch("/:id", async (req, res) => {
 
   try {
     let result = await collection.replaceOne(query, updates);
-
     res.send(result).status(200);
   } catch (error) {
-    throw new Error("asdf");
+    throw new Error(error);
   }
 });
 
