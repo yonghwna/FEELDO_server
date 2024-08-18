@@ -9,12 +9,24 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+// Middleware to check for User ID in the request headers
+app.use((req, res, next) => {
+  const userId = req.headers["user-code"];
+  console.log("🚀 ~ app.use :", userId);
+
+  if (!userId) {
+    return res.status(400).send("User ID is required in the headers.");
+  }
+
+  next();
+});
 
 // Load the /todoList routes
 app.use("/todoList", todoList);
 
 // Global error handling
 app.use((err, _req, res, next) => {
+  console.log(err);
   res.status(500).send("Uh oh! An unexpected error occured.");
 });
 
