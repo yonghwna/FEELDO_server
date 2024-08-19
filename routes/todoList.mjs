@@ -6,28 +6,30 @@ const router = express.Router();
 
 /**모든 todo가져오기 */
 router.get("/", async (req, res) => {
+  console.log(typeof req.headers["user-code"]);
   const user = JSON.parse(req.headers["user-code"]);
 
+  console.log("🚀 ~ router.get ~ user:", user);
   let collection = await db.collection("todoList");
   let results = await collection.find({ author: { $eq: user } }).toArray();
-  let results2 = await collection.find().toArray();
-  console.log("🚀 results:", results, results2);
+
+  console.log("🚀 results:", results);
 
   res.send(results).status(200);
+  // res.send(null).status(200);
 });
 
 /**새로운 todo 추가하기 */
 router.post("/", async (req, res) => {
   let collection = await db.collection("todoList");
   const user = JSON.parse(req.headers["user-code"]);
-  console.log("🚀 ~ router.post ~ user:", user);
+
   let newDocument = req.body;
   /**기본값 설정 */
   newDocument.author = user;
   newDocument.createdAt = new Date();
   newDocument.isComplete = false;
-  newDocument.feel = "neutral";
-
+  console.log(newDocument);
   let result = await collection.insertOne(newDocument);
 
   res.send(result).status(204);
@@ -40,17 +42,16 @@ router.patch("/:id", async (req, res) => {
   let collection = await db.collection("todoList");
   let targetDocument = await collection.findOne(query);
   const user = JSON.parse(req.headers["user-code"]);
-  console.log(`aa`, user);
 
   const updates = {
     text: req.body.text,
     priority: req.body.priority,
+    feel: req.body.feel,
     author: targetDocument.author,
     createdAt: targetDocument.createdAt,
     isComplete: req.body.isComplete,
-    feel: req.body.feel,
   };
-  console.log(`asdf`, updates);
+
   try {
     let result = await collection.replaceOne(query, updates);
     res.send(result).status(200);
