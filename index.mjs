@@ -12,7 +12,6 @@ app.use(express.json());
 // Middleware to check for User ID in the request headers
 app.use((req, res, next) => {
   const userId = req.headers["user-code"];
-  console.log("🚀 ~ app.use :", userId);
 
   if (!userId) {
     return res.status(400).send("User ID is required in the headers.");
